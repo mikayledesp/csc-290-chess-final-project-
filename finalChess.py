@@ -1,5 +1,5 @@
 # type:ignore
-import finalChess
+import chess
 import random
 import datetime
 import math
@@ -24,32 +24,32 @@ def startingMov():
     
     pass 
     
-def getEval(captured_piece:finalChess.Piece|None) -> int:
+def getEval(captured_piece:chess.Piece|None) -> int:
 
     if (captured_piece == None):
         return 0
     else:
-        if captured_piece.piece_type == finalChess.PAWN:
+        if captured_piece.piece_type == chess.PAWN:
             return 1
-        elif captured_piece.piece_type == finalChess.KNIGHT:
+        elif captured_piece.piece_type == chess.KNIGHT:
             return 3
-        elif captured_piece.piece_type == finalChess.BISHOP:
+        elif captured_piece.piece_type == chess.BISHOP:
             return 3
-        elif captured_piece.piece_type == finalChess.ROOK:
+        elif captured_piece.piece_type == chess.ROOK:
             return 5
-        elif captured_piece.piece_type == finalChess.QUEEN:
+        elif captured_piece.piece_type == chess.QUEEN:
             return 9
         else:
             return 0
 
 
-def min(board:finalChess.Board, rec_depth:int) -> tuple[float,list[finalChess.Move]]:
+def min(board:chess.Board, rec_depth:int) -> tuple[float,list[chess.Move]]:
     moveList = list(board.legal_moves)
     opp_best_score = +math.inf
     opp_best_moves = []
 
     for move in moveList:
-        baseBoard = finalChess.BaseBoard(board.board_fen())
+        baseBoard = chess.BaseBoard(board.board_fen())
         move_piece = baseBoard.piece_at(move.to_square)
         opp_move_score = -getEval(move_piece)
 
@@ -73,13 +73,13 @@ def min(board:finalChess.Board, rec_depth:int) -> tuple[float,list[finalChess.Mo
     return opp_best_score, opp_best_moves
 
 
-def max(board:finalChess.Board, rec_depth:int) -> tuple[float,list[finalChess.Move]]:
+def max(board:chess.Board, rec_depth:int) -> tuple[float,list[chess.Move]]:
     best_moves = []
     moveList = list(board.legal_moves)
     best_score = -math.inf
 
     for move in moveList:
-        baseBoard = finalChess.BaseBoard(board.board_fen())
+        baseBoard = chess.BaseBoard(board.board_fen())
         move_piece = baseBoard.piece_at(move.to_square)
         player_move_score = getEval(move_piece)
         if rec_depth == 0:
@@ -103,10 +103,17 @@ def max(board:finalChess.Board, rec_depth:int) -> tuple[float,list[finalChess.Mo
 
 def main () -> None:
 
-    with open('Chess_FEN_data.csv', mode='r') as data_file:
-        data_reader = csv.DictReader(file)
+    FEN_moves:dict[str, str] = {}
 
-        
+    with open('chessMoves.csv', mode='r') as data_file:
+        data_reader = csv.DictReader(data_file)
+
+        for row in data_reader:
+            # neighbors_list = [neighbor.strip() for neighbor in row['NEIGHBORS'].split(",")]
+            FEN_moves[row["FEN"]] = row["Next move"]
+
+    # for i in range(5):
+    print(FEN_moves.keys())
 
 
     print("="*33)
@@ -118,19 +125,19 @@ def main () -> None:
     startingFEN = input("Starting FEN position? (hit ENTER for standard starting postion): ")
     board = None
     if (startingFEN == ""):
-        board = finalChess.Board()
+        board = chess.Board()
     else:
-        board = finalChess.Board(startingFEN)
+        board = chess.Board(startingFEN)
     
     botName = ""
     playerName = "" 
     
     if (botColor == "w"):
-       botColor = finalChess.WHITE
+       botColor = chess.WHITE
        botName = "Bot (as white)"
        playerName = "Black"
     elif (botColor == "b"):
-        botColor = finalChess.BLACK
+        botColor = chess.BLACK
         botName = "Bot (as black)"
         playerName = "White"
 
@@ -146,7 +153,7 @@ def main () -> None:
            
             best_move = best_moves[random.randint(0,len(best_moves)-1)]
 
-            bigBaseBoard = finalChess.BaseBoard(board.board_fen())
+            bigBaseBoard = chess.BaseBoard(board.board_fen())
             if (len(best_moves) != 0):
                 print(f"{botName}: {best_move}")
 
@@ -163,7 +170,7 @@ def main () -> None:
             playerMove = None
 
             try:
-                playerMove = finalChess.Move.from_uci(playerInput)
+                playerMove = chess.Move.from_uci(playerInput)
             except:
                 print("Make sure your input is in UCI format!")
                 playerInput = input(f"{playerName}: ")
