@@ -4,8 +4,8 @@ import random
 import datetime
 import math
 import csv
-# To DO: add old chess moves in ass a database that the chess bot looks at before minimax
 
+# To DO: add old chess moves in ass a database that the chess bot looks at before minimax
 
 def startingMov():
     # itnitializing the dictionary here 
@@ -18,10 +18,9 @@ def startingMov():
     # then play that move or use minimax if no key found
     # if state exists or player that did that move lost would do mini max
     # two databases 
-    
-    
+   
+       
     # First steps 
-    
     
     pass 
     
