@@ -1,7 +1,9 @@
+# type:ignore
 import finalChess
 import random
 import datetime
 import math
+import csv
 # To DO: add old chess moves in ass a database that the chess bot looks at before minimax
 
 
@@ -101,6 +103,12 @@ def max(board:finalChess.Board, rec_depth:int) -> tuple[float,list[finalChess.Mo
 
 
 def main () -> None:
+
+    with open('Chess_FEN_data.csv', mode='r') as data_file:
+        data_reader = csv.DictReader(file)
+
+        
+
 
     print("="*33)
     print(f"\tWelcome to Chess!")
